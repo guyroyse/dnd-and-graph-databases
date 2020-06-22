@@ -1,0 +1,19 @@
+{
+  "name": "redis-dungeon",
+  "version": "0.0.1",
+  "description": "RedisGraph dungeon generator and pathfinder.",
+  "scripts": {
+    "test": "mocha spec/**/*-spec.js"
+  },
+  "author": "Guy Royse <guy@guyroyse.com>",
+  "private": true,
+  "devDependencies": {
+    "mocha": "^7.1.0",
+    "chai": "^4.2.0"
+  },
+  "dependencies": {
+    "fantasy-name-generator": "^2.0.0",
+    "lodash": "^4.17.15",
+    "redisgraph.js": "^2.0.3"
+  }
+}
