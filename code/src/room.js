@@ -1,61 +1,68 @@
-const Rando = require('./randomizer')
 const graph = require('./redis-executor')
+const rando = require('./randomizer')
+const Monster = require('./monster')
+const Treasure = require('./treasure')
 
 class Room {
 
   static async generate() {
+    let name = rando.roomName()
+
     let room = new Room()
-    room.name = Ranod.roomName()
+    await room.save(name)
 
-    await room.save()
+    let numberOfMonsters = Math.max(0, rando.d6() - 3)
+    await Promise.all(
+      new Array(numberOfMonsters)
+        .fill()
+        .map(async _ => {
+          let monster = await Monster.generate()
+          await room.addMonster(monster)
+        }))
 
+    let numberOfTreasures = Math.max(0, rando.d8() - 5)
+    await Promise.all(
+      new Array(numberOfTreasures)
+        .fill()
+        .map(async _ => {
+          let treasure = await Treasure.generate()
+          await room.addTreasure(treasure)
+        }))
+
+    
     return room
   }
 
-  async save() {
-    await graph.execute("CREATE (r:room) SET r.name = $name", this)
+  async save(name) {
+    let query = `
+      CREATE (r:room) SET r.name = $name
+      RETURN id(r), r.name`
+    let values = await graph.executeAndReturnSingle(query, { name })
+    this.id = values[0]
+    this.name = values[1]
   }
 
+  async addMonster(monster) {
+    let query = `
+      MATCH (r:room) WHERE id(r) = $roomId
+      MATCH (m:monster) WHERE id(m) = $monsterId
+      CREATE (r)-[:contains]->(m)`
+    await graph.execute(query, { roomId: this.id, monsterId: monster.id })
+    console.log(monster)
+    if (!this.monsters) this.monsters = []
+    this.monsters.push(monster)
+  }
+
+  async addTreasure(treasure) {
+    let query = `
+      MATCH (r:room) WHERE id(r) = $roomId
+      MATCH (t:treasure) WHERE id(t) = $treasureId
+      CREATE (r)-[:contains]->(t)`
+    await graph.execute(query, { roomId: this.id, treasureId: treasure.id })
+    console.log(treasure)
+    if (!this.treasures) this.treasures = []
+    this.treasures.push(treasure)
+  }
 }
-
-//   let names = []
-
-//   for (let i = 0; i < 10; i++) {
-//     let room = this.randomRoom()
-//     names.push(room.name)
-//     await graph.query(`CREATE (:room { name: '${room.name}', shape: '${room.shape}', width: ${room.diameter} })`)
-//   }
-
-//   for (let i = 0; i < 10; i++) {
-//     let samples = _.sampleSize(names, 2)
-//     let query = `MATCH (a:room { name: '${samples[0]}' }), (b:room { name: '${samples[1]}' } ) CREATE (a)-[:connects_to]->(b), (b)-[:connects_to]->(a)`
-//     await graph.query(query)
-//   }
-
-//   await this.close()
-
-// }
-
-// randomRoom() {
-//   return {
-//     name: this.randomRoomName(),
-//     shape: this.randomRoomShape(),
-//     diameter: this.randomRoomDiameter()
-//   }
-// }
-
-// randomRoomDiameter() {
-//   return Math.floor(Math.random() * 10 + 3) * 5
-// }
-
-// randomRoomShape() {
-//   return _.sample(SHAPES)
-// }
-
-// randomRoomName() {
-//   let type = _.sample(TYPES)
-//   let name = nameByRace("orc", { gender: "male" })
-//   return `${type} of ${name}`
-// }
 
 module.exports = Room

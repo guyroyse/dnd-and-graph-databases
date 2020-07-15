@@ -1,4 +1,3 @@
-const redis = require('redis')
 const RedisGraph = require('redisgraph.js').Graph
 
 let graphClient
