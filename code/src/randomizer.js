@@ -1,6 +1,7 @@
 const _ = require('lodash')
 
 const fantasyName = require('./name-generator')
+const { forOwn } = require('lodash')
 
 const DUNGEON_ADJECTIVES = [
   "Deep", "Dim", "Gloomy", "Forlorn", "Lonely", "Ruined", "Forgotten", "High",
@@ -11,35 +12,35 @@ const DUNGEON_STRUCTURES = [
 
 const ROOM_ADJECTIVES = [
   "Big", "Narrow", "Grand", "Green", "Blue", "Painted", "Red", "Black", "Cavernous",
-  "Dank", "Damp", "Musty", "Dusty", "Abandoned", "Filty", "Vile", "Shattered" ]
+  "Dank", "Damp", "Musty", "Dusty", "Abandoned", "Filthy", "Vile", "Shattered" ]
 
 const ROOM_STRUCTURES = [
   "Chamber", "Gaol", "Barracks", "Warren", "Den", "Defile", "Pit", "Chasm", "Hall",
   "Bridge", "Stairs", "Room" ]
 
-const MONSTERS= [
+const MONSTERS = [
   "orc", "purple ooze", "goblin", "ogre", "dragon", "displacer beast", "rust monster",
-  "demon", "skeleton", "ghast", "gnoll", "cyclops", "ettin", "mimic", "bandit",
-  "giant rat", "giant ant" ]
+  "demon", "skeleton", "ghast", "gnoll", "hill giant", "wraith", "ettin", "mimic",
+  "bandit", "giant rat", "giant ant", "zorn", "bugbear", "gorgon" ]
 
-  const ITEM_ADJECTIVES = [
-    "gilded", "bejeweled", "corroded", "broken", "masterwork", "worn",
-    "dwarven", "elven", "fine" ]
+const ITEM_ADJECTIVES = [
+  "gilded", "bejeweled", "corroded", "broken", "masterwork", "worn",
+  "dwarven", "elven", "fine" ]
 
-  const ITEMS = [
-    "leather armor", "studded leather", "scale mail", "breastplate",
-    "ring mail", "chain mail", "plate", "shield", "club", "dagger",
-    "mace", "quarterstaff", "spear", "shortbow", "sling", "battleaxe",
-    "flail", "glaive", "greataxe", "halberd", "lance", "longsword",
-    "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword",
-    "trident", "warhammer", "whip", "crossbow", "longbow" ]
+const ITEMS = [
+  "leather armor", "studded leather", "scale mail", "breastplate",
+  "ring mail", "chain mail", "plate", "shield", "club", "dagger",
+  "mace", "quarterstaff", "spear", "shortbow", "sling", "battleaxe",
+  "flail", "glaive", "greataxe", "halberd", "lance", "longsword",
+  "maul", "morningstar", "pike", "rapier", "scimitar", "shortsword",
+  "trident", "warhammer", "whip", "crossbow", "longbow" ]
 
-  const ARTIFACTS = [
-    "orb", "chalice", "necklace", "eye", "tome", "wand", "rod", "staff",
-    "book", "gem", "sphere", "amulet", "hand", "bracers", "helm", "decanter",
-    "armor", "plate", "breastplate", "shield", "dagger", "mace", "spear",
-    "bow", "axe", "lance", "trident" ]
- 
+const ARTIFACTS = [
+  "orb", "chalice", "necklace", "eye", "tome", "wand", "rod", "staff",
+  "book", "gem", "sphere", "amulet", "hand", "bracers", "helm", "decanter",
+  "armor", "plate", "breastplate", "shield", "dagger", "mace", "spear",
+  "bow", "axe", "lance", "trident" ]
+
 
 function dungeonName() {
   let adjective = _.sample(DUNGEON_ADJECTIVES)
@@ -86,12 +87,10 @@ function itemName() {
 }
 
 function titleCase(s) {
-  return s
-    .split(' ')
-    .map(w => w[0].toUpperCase() + w.slice(1))
-    .join(' ')
+  return _.startCase(s)
 }
 
+let d2 = () => d(2)
 let d3 = () => d(3)
 let d4 = () => d(4)
 let d6 = () => d(6)
@@ -102,9 +101,9 @@ let d20 = () => d(20)
 let d30 = () => d(30)
 let d100 = () => d(100)
 
-let d = x=> Math.floor(Math.random() * x) + 1
+let d = sides => _.random(1, sides)
 
 module.exports = {
   dungeonName, roomName, monsterName, itemName,
-  d3, d4, d6, d8, d10, d12, d20, d30, d100
+  d2, d3, d4, d6, d8, d10, d12, d20, d30, d100
 }

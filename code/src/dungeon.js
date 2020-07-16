@@ -1,46 +1,72 @@
 const _ = require('lodash')
 
-const graph = require('./redis-executor')
 const rando = require('./randomizer')
 const Room = require('./room')
+const queries = require('./data/queries')
 
 class Dungeon {
 
-  static async generate({ numberOfRooms = 20, numberOfEntrances = 1 } = {}) {
+  static async generate() {
+
+    let numberOfEntrances = rando.d3()
+    let numberOfExits = rando.d3()
+    let numberOfRooms = 10 + rando.d20()
     let name = rando.dungeonName()
 
     let dungeon = new Dungeon()
-    await dungeon.save(name)
+    dungeon.name = name
+    await queries.saveDungeon(dungeon)
 
-    let rooms = await Promise.all(
-      new Array(numberOfRooms)
-        .fill()
-        .map(async _ => await Room.generate()))
-
-    await Promise.all(
-      _.sampleSize(rooms, numberOfEntrances)
-        .map(async room => await dungeon.addEntrance(room)))
+    await dungeon.addRooms(numberOfRooms)
+    await dungeon.addEntrances(numberOfEntrances)
+    await dungeon.addExits(numberOfExits)
+    await dungeon.connectRooms()
 
     return dungeon
   }
 
-  async save(name) {
-    let query = `
-      CREATE (d:dungeon) SET d.name = $name
-      RETURN id(d), d.name`
-    let values = await graph.executeAndReturnSingle(query, { name })
-    this.id = values[0]
-    this.name = values[1]
+  async addRooms(number) {
+    this.rooms = await Promise.all(
+      _(number)
+        .times(async __ => await Room.generate()))
   }
 
-  async addEntrance(room) {
-    let query = `
-      MATCH (d:dungeon) WHERE id(d) = $dungeonId
-      MATCH (r:room) WHERE id(r) = $roomId
-      CREATE (d)-[:has_entrance_to]->(r)`
-    await graph.execute(query, { dungeonId: this.id, roomId: room.id })
-    if (!this.entrances) this.entrances = []
-    this.entrances.push(room)
+  async addEntrances(number) {
+    this.entrances = await Promise.all(
+      _(this.rooms)
+        .sampleSize(number)
+        .map(async room => await queries.addEntrance(this, room)))
+  }
+
+  async addExits(number) {
+    this.exits = await Promise.all(
+      _(this.rooms)
+        .sampleSize(number)
+        .map(async room => await queries.addExit(this, room)))
+  }
+
+  async connectRooms() {
+    await Promise.all(
+      _(this.rooms)
+        .map(async room => await this.connectRoom(room)))
+  }
+
+  async connectRoom(room) {
+    let numberOfDoors = rando.d3()
+    await Promise.all(
+      _(numberOfDoors)
+        .times(async __ => {
+          let destination = _.sample(this.rooms)
+          let isOneWay = rando.d8() === 1
+          queries.connectRooms(room, destination)
+          if (!isOneWay) {
+            queries.connectRooms(destination, room)
+          }
+        }))
+  }
+
+  async save() {
+    queries.saveDungeon(this)
   }
 }
 
