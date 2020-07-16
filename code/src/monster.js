@@ -8,7 +8,10 @@ class Monster {
   static async generate() {
 
     let count = Math.max(1, rando.d6() + rando.d6() - 5)
-    let name = rando.monsterName(count)
+    let name = count === 1
+      ? rando.monsterName()
+      : `${count} ${rando.monster()}s`
+
     let cr = rando.d10() + count
     let xp = rando.d6() * cr
 

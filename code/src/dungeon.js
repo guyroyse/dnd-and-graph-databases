@@ -56,17 +56,17 @@ class Dungeon {
     await Promise.all(
       _(numberOfDoors)
         .times(async __ => {
-          let destination = _.sample(this.rooms)
-          let isOneWay = rando.d8() === 1
-          queries.connectRooms(room, destination)
-          if (!isOneWay) {
-            queries.connectRooms(destination, room)
-          }
+          let to = _(this.rooms).sample()
+          await this.connectTwoRooms(room, to)
         }))
   }
 
-  async save() {
-    queries.saveDungeon(this)
+  async connectTwoRooms(from, to) {
+    let isOneWay = rando.d8() === 1
+    await queries.connectRooms(from, to)
+    if (!isOneWay) {
+      await queries.connectRooms(to, from)
+    }
   }
 }
 

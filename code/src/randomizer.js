@@ -1,7 +1,5 @@
 const _ = require('lodash')
-
 const fantasyName = require('./name-generator')
-const { forOwn } = require('lodash')
 
 const DUNGEON_ADJECTIVES = [
   "Deep", "Dim", "Gloomy", "Forlorn", "Lonely", "Ruined", "Forgotten", "High",
@@ -43,36 +41,35 @@ const ARTIFACTS = [
 
 
 function dungeonName() {
-  let adjective = _.sample(DUNGEON_ADJECTIVES)
-  let structure = _.sample(DUNGEON_STRUCTURES)
+  let adjective = _(DUNGEON_ADJECTIVES).sample()
+  let structure = _(DUNGEON_STRUCTURES).sample()
   let name = fantasyName()
 
   return `The ${adjective} ${structure} of ${name}`
 }
 
 function roomName() {
-  let adjective = _.sample(ROOM_ADJECTIVES)
-  let structure = _.sample(ROOM_STRUCTURES)
+  let adjective = _(ROOM_ADJECTIVES).sample()
+  let structure = _(ROOM_STRUCTURES).sample()
 
   return `${adjective} ${structure}`
 }
 
-function monsterName(count) {
-  let name = fantasyName()
-  let type = _.sample(MONSTERS)
+function monster() {
+  return _(MONSTERS).sample()
+}
 
-  return count === 1
-    ? `${name} the ${titleCase(type)}`
-    : `${count} ${type}s`
+function monsterName() {
+  return `${fantasyName()} the ${titleCase(_(MONSTERS).sample())}`
 }
 
 function itemName() {
 
   let generators = [
-    () => `${_.sample(ITEM_ADJECTIVES)} ${_.sample(ITEMS)}`,
-    () => `+${d4()} ${_.sample(ITEMS)}`,
-    () => `-${d3()} cursed ${_.sample(ITEMS)}`,
-    () => `The ${titleCase(_.sample(ARTIFACTS))} of ${fantasyName()}`,
+    () => `${_(ITEM_ADJECTIVES).sample()} ${_(ITEMS).sample()}`,
+    () => `+${d4()} ${_(ITEMS).sample()}`,
+    () => `-${d3()} cursed ${_(ITEMS).sample()}`,
+    () => `The ${titleCase(_(ARTIFACTS).sample())} of ${fantasyName()}`,
     () => `pile of coins`,
     () => `sack of coins`,
     () => `chest of coins`,
@@ -83,7 +80,7 @@ function itemName() {
     () => `${d100()} semiprecious stones`
   ]
 
-  return _.sample(generators)()
+  return _(generators).sample()()
 }
 
 function titleCase(s) {
@@ -104,6 +101,6 @@ let d100 = () => d(100)
 let d = sides => _.random(1, sides)
 
 module.exports = {
-  dungeonName, roomName, monsterName, itemName,
+  dungeonName, roomName, monster, monsterName, itemName,
   d2, d3, d4, d6, d8, d10, d12, d20, d30, d100
 }
