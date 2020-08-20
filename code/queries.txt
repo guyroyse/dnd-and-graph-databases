@@ -1,0 +1,20 @@
+# The Dungeon
+MATCH (d:dungeon) RETURN d.name
+
+# All the Rooms
+MATCH (r:room) RETURN r.name
+
+# All the Monsters
+MATCH (m:monster) RETURN m.name
+
+# All the Treasure
+MATCH (t:treasure) RETURN t.name, t.gp
+
+# Rooms and Treasures
+MATCH (r:room)-[:contains]->(t:treasure) RETURN r.name, t.name, t.gp
+
+# Find Longest Path
+MATCH p = (:dungeon)-[:has_entrance]->(:room)-[:leads_to*]->(:room)-[:has_exit]->(:dungeon) RETURN nodes(p), relationships(p), length(p) as l ORDER BY l DESC LIMIT 1
+
+# Shortest Path to the Most Gold
+MATCH (max:treasure) WITH max(max.gp) as maxgp MATCH (r:room)-[:contains]->(t:treasure) WHERE t.gp = maxgp WITH id(r) as dest_id MATCH p = (start:room)-[:leads_to*]->(stop:room) WHERE id(start) = 1 AND id(stop) = dest_id RETURN nodes(p), length(p) as len ORDER BY len ASC LIMIT 1
