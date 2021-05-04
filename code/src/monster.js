@@ -1,9 +1,9 @@
-const _ = require('lodash')
+import _ from 'lodash'
 
-const rando = require('./randomizer')
-const queries = require('./data/queries')
+import rando from './randomizer.js'
+import queries from './data/queries.js'
 
-class Monster {
+export default class Monster {
 
   static async generate() {
 
@@ -24,5 +24,3 @@ class Monster {
     return monster
   }
 }
-
-module.exports = Monster

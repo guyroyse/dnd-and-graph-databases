@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "RedisGraph dungeon generator and pathfinder.",
   "author": "Guy Royse <guy@guyroyse.com>",
+  "type": "module",
   "private": true,
   "dependencies": {
     "fantasy-name-generator": "^2.0.0",

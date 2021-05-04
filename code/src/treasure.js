@@ -1,9 +1,9 @@
-const _ = require('lodash')
+import _ from 'lodash'
 
-const rando = require('./randomizer')
-const queries = require('./data/queries')
+import rando from './randomizer.js'
+import queries from './data/queries.js'
 
-class Treasure {
+export default class Treasure {
 
   static async generate() {
 
@@ -18,5 +18,3 @@ class Treasure {
     return treasure
   }
 }
-
-module.exports = Treasure

@@ -1,5 +1,5 @@
-const _ = require('lodash')
-const fantasyName = require('./name-generator')
+import _ from 'lodash'
+import fantasyName from './name-generator.js'
 
 const DUNGEON_ADJECTIVES = [
   "Deep", "Dim", "Gloomy", "Forlorn", "Lonely", "Ruined", "Forgotten", "High",
@@ -100,7 +100,7 @@ let d100 = () => d(100)
 
 let d = sides => _.random(1, sides)
 
-module.exports = {
+export default {
   dungeonName, roomName, monster, monsterName, itemName,
   d2, d3, d4, d6, d8, d10, d12, d20, d30, d100
 }

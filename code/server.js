@@ -1,5 +1,5 @@
-const graph = require('./src/data/redis-executor')
-const Dungeon = require('./src/dungeon')
+import graph from './src/data/redis-executor.js'
+import Dungeon from './src/dungeon.js'
 
 async function start() {
   graph.open('dungeon')

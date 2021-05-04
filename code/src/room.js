@@ -1,11 +1,11 @@
-const _ = require('lodash')
+import _ from 'lodash'
 
-const rando = require('./randomizer')
-const Monster = require('./monster')
-const Treasure = require('./treasure')
-const queries = require('./data/queries')
+import rando from './randomizer.js'
+import Monster from './monster.js'
+import Treasure from './treasure.js'
+import queries from './data/queries.js'
 
-class Room {
+export default class Room {
 
   static async generate() {
 
@@ -41,5 +41,3 @@ class Room {
         }))
   }
 }
-
-module.exports = Room

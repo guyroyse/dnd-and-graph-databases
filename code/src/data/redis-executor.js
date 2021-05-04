@@ -1,4 +1,4 @@
-const RedisGraph = require('redisgraph.js').Graph
+import { Graph as RedisGraph } from 'redisgraph.js'
 
 const HOST = process.env.REDIS_GRAPH_HOST || 'localhost'
 const PORT = process.env.REDIS_GRAPH_PORT || 6379
@@ -45,4 +45,4 @@ async function executeAndReturnMany(query, parameters) {
   return valueSet
 }
 
-module.exports = { open, close, execute, executeAndReturnSingle, executeAndReturnMany }
+export default { open, close, execute, executeAndReturnSingle, executeAndReturnMany }

@@ -1,4 +1,4 @@
-const graph = require('./redis-executor')
+import graph from './redis-executor.js'
 
 async function saveDungeon(dungeon) {
   let query = `
@@ -79,6 +79,6 @@ async function connectRooms(from, to) {
 }
 
 
-module.exports = {
+export default {
   saveDungeon, saveRoom, saveMonster, saveTreasureItem,
   addEntrance, addExit, connectRooms, addMonsterToRoom, addTreasureToRoom }

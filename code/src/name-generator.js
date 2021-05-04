@@ -1,5 +1,5 @@
-const _ = require('lodash')
-const { nameByRace } = require('fantasy-name-generator')
+import _ from 'lodash'
+import { nameByRace } from 'fantasy-name-generator'
 
 const RACES = [
   'angel', 'cavePerson', 'darkelf', 'demon', 'dragon', 'drow', 'dwarf',
@@ -8,8 +8,6 @@ const RACES = [
 
 const GENDERS = [ 'male', 'female' ]
 
-function fantasyName() {
+export default function fantasyName() {
   return nameByRace(_.sample(RACES), { gender: _.sample(GENDERS) })
 }
-
-module.exports = fantasyName
