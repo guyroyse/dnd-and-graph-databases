@@ -2,7 +2,7 @@ import graph from './redis-executor.js'
 
 async function saveDungeon(dungeon) {
   let query = `
-    CREATE (d:dungeon)
+    CREATE (d:Dungeon)
     SET d.name = $name
     RETURN id(d)`
   let values = await graph.executeAndReturnSingle(query, { name: dungeon.name })
@@ -11,7 +11,7 @@ async function saveDungeon(dungeon) {
 
 async function saveRoom(room) {
   let query = `
-    CREATE (r:room)
+    CREATE (r:Room)
     SET r.name = $name
     RETURN id(r)`
   let values = await graph.executeAndReturnSingle(query, { name: room.name })
@@ -20,7 +20,7 @@ async function saveRoom(room) {
 
 async function saveMonster(monster) {
   let query = `
-    CREATE (m:monster)
+    CREATE (m:Monster)
     SET m.name = $name, m.cr = $cr, m.xp = $xp
     RETURN id(m)`
   let values = await graph.executeAndReturnSingle(query, { 
@@ -30,7 +30,7 @@ async function saveMonster(monster) {
 
 async function saveTreasureItem(treasure) {
   let query = `
-    CREATE (t:treasure)
+    CREATE (t:Treasure)
     SET t.name = $name, t.gp = $gp
     RETURN id(t)`
   let values = await graph.executeAndReturnSingle(query, { 
@@ -40,41 +40,41 @@ async function saveTreasureItem(treasure) {
 
 async function addEntrance(dungeon, room) {
   let query = `
-    MATCH (d:dungeon) WHERE id(d) = $dungeonId
-    MATCH (r:room) WHERE id(r) = $roomId
-    CREATE (d)-[:has_entrance]->(r)`
+    MATCH (d:Dungeon) WHERE id(d) = $dungeonId
+    MATCH (r:Room) WHERE id(r) = $roomId
+    CREATE (d)-[:HAS_ENTRANCE]->(r)`
   await graph.execute(query, { dungeonId: dungeon.id, roomId: room.id })
 }
 
 async function addExit(dungeon, room) {
   let query = `
-    MATCH (d:dungeon) WHERE id(d) = $dungeonId
-    MATCH (r:room) WHERE id(r) = $roomId
-    CREATE (r)-[:has_exit]->(d)`
+    MATCH (d:Dungeon) WHERE id(d) = $dungeonId
+    MATCH (r:Room) WHERE id(r) = $roomId
+    CREATE (r)-[:HAS_EXIT]->(d)`
   await graph.execute(query, { dungeonId: dungeon.id, roomId: room.id })
 }
 
 async function addMonsterToRoom(room, monster) {
   let query = `
-    MATCH (r:room) WHERE id(r) = $roomId
-    MATCH (m:monster) WHERE id(m) = $monsterId
-    CREATE (r)-[:contains]->(m)`
+    MATCH (r:Room) WHERE id(r) = $roomId
+    MATCH (m:Monster) WHERE id(m) = $monsterId
+    CREATE (r)-[:CONTAINS]->(m)`
   await graph.execute(query, { roomId: room.id, monsterId: monster.id })
 }
 
 async function addTreasureToRoom(room, treasure) {
   let query = `
-    MATCH (r:room) WHERE id(r) = $roomId
-    MATCH (t:treasure) WHERE id(t) = $treasureId
-    CREATE (r)-[:contains]->(t)`
+    MATCH (r:Room) WHERE id(r) = $roomId
+    MATCH (t:Treasure) WHERE id(t) = $treasureId
+    CREATE (r)-[:CONTAINS]->(t)`
   await graph.execute(query, { roomId: room.id, treasureId: treasure.id })
 }
 
 async function connectRooms(from, to) {
   let query = `
-    MATCH (from:room) WHERE id(from) = $fromId
-    MATCH (to:room) WHERE id(to) = $toId
-    CREATE (from)-[:leads_to]->(to)`
+    MATCH (from:Room) WHERE id(from) = $fromId
+    MATCH (to:Room) WHERE id(to) = $toId
+    CREATE (from)-[:LEADS_TO]->(to)`
   await graph.execute(query, { fromId: from.id, toId: to.id })
 }
 
