@@ -11,10 +11,33 @@ MATCH (m:Monster) RETURN m.name
 MATCH (t:Treasure) RETURN t.name, t.gp
 
 # Rooms and Treasures
-MATCH (r:Room)-[:CONTAINS]->(t:Treasure) RETURN r.name, t.name, t.gp
+MATCH (r:Room)-[:CONTAINS]->(t:Treasure)
+RETURN r.name, t.name, t.gp
 
 # Find Longest Path
-MATCH p = (:Dungeon)-[:HAS_ENTRANCE]->(:Room)-[:LEADS_TO*]->(:Room)-[:HAS_EXIT]->(:Dungeon) RETURN nodes(p), relationships(p), length(p) as l ORDER BY l DESC LIMIT 1
+MATCH p = (:Dungeon)-[:HAS_ENTRANCE]->(:Room)-[:LEADS_TO*]->(:Room)-[:HAS_EXIT]->(:Dungeon)
+RETURN nodes(p), relationships(p), length(p) as l
+ORDER BY l DESC
+LIMIT 1
 
 # Shortest Path to the Most Gold
-MATCH (max:Treasure) WITH max(max.gp) as maxgp MATCH (r:Room)-[:CONTAINS]->(t:Treasure) WHERE t.gp = maxgp WITH id(r) as dest_id MATCH p = (start:Room)-[:LEADS_TO*]->(stop:Room) WHERE id(start) = 1 AND id(stop) = dest_id RETURN nodes(p), length(p) as len ORDER BY len ASC LIMIT 1
+MATCH (max:Treasure)
+  WITH max(max.gp) AS maxgp
+MATCH (r:Room)-[:CONTAINS]->(t:Treasure)
+  WHERE t.gp = maxgp
+  WITH id(r) as dest_id
+MATCH p = (start:Room)-[:LEADS_TO*]->(stop:Room)
+  WHERE id(start) = 1 AND id(stop) = dest_id
+RETURN nodes(p), length(p) as len
+ORDER BY len ASC
+LIMIT 1
+
+# Shortest Path to the Most Gold
+MATCH (max:Treasure)
+  WITH max(max.gp) AS maxgp
+MATCH (r:Room)-[:CONTAINS]->(t:Treasure)
+  WHERE t.gp = maxgp
+  WITH id(r) as dest_id
+MATCH (start:Room), (stop:Room)
+  WHERE id(start) = 1 AND id(stop) = dest_id
+  RETURN shortestPath((start)-[:LEADS_TO*]->(stop))
