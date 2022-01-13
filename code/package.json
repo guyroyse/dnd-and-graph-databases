@@ -4,6 +4,9 @@
   "description": "RedisGraph dungeon generator and pathfinder.",
   "author": "Guy Royse <guy@guyroyse.com>",
   "type": "module",
+  "scripts": {
+    "demo": "node demo.js"
+  },
   "private": true,
   "dependencies": {
     "fantasy-name-generator": "^2.0.0",
