@@ -4,12 +4,12 @@ import { Graph as RedisGraph } from 'redisgraph.js'
 
   const HOST = 'localhost'
   const PORT = 6379
-  const PASSWORD = 'foobared'
 
-  let graphClient = new RedisGraph('dungeon', HOST, PORT, { password: PASSWORD })
+  let graphClient = new RedisGraph('dungeon', HOST, PORT)
 
   let result = await graphClient.query(
-    'match (r:Room) return r.name', {}
+    'match (r:Room) where id(r) = $id return r.name as Name, id(r) as ID',
+      { id: 1 }
   )
 
   console.log(result.getHeader())

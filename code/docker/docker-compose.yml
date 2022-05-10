@@ -1,17 +1,8 @@
-version: "3.9"
 services:
   redis:
-    image: "redislabs/redismod:edge"
+    image: "redis/redis-stack:latest"
     ports:
       - "6379:6379"
+      - "8002:8001"
     volumes:
       - ./data:/data
-    entrypoint: >
-      redis-server
-        --requirepass foobared
-        --loadmodule /usr/lib/redis/modules/redisgraph.so
-        --save 60 1
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
