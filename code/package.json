@@ -10,7 +10,7 @@
   "private": true,
   "dependencies": {
     "fantasy-name-generator": "^2.0.0",
-    "lodash": "^4.17.19",
-    "redisgraph.js": "^2.1.0"
+    "lodash": "^4.17.21",
+    "redis": "^4.1.0"
   }
 }

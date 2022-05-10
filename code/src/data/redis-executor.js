@@ -1,47 +1,31 @@
-import { Graph as RedisGraph } from 'redisgraph.js'
+import { createClient } from 'redis'
 
-const HOST = process.env.REDIS_GRAPH_HOST || 'localhost'
-const PORT = process.env.REDIS_GRAPH_PORT || 6379
+const key = 'dungeon'
 
-let graphClient
+const client = createClient()
+client.on('error', (err) => console.log('Redis Client Error', err))
 
-function open(key) {
-  if (!graphClient) {
-    graphClient = new RedisGraph(key, HOST, PORT)
-    graphClient.deleteGraph()
-  }
+async function open() {
+  await client.connect()
+  if (await client.exists(key)) await client.unlink(key)
 }
 
-function close() {
-  graphClient.close()
+async function close() {
+  await client.quit()
 }
 
-async function execute(query, parameters) {
-  await graphClient.query(query, parameters)
+async function execute(query) {
+  await client.graph.query(key, query)
 }
 
-async function executeAndReturnSingle(query, parameters) {
-  let result = await graphClient.query(query, parameters)
-  if (result.hasNext() === false) return null
+async function executeAndReturnSingle(query) {
+  let result = await client.graph.query(key, query)
+  if (result.data.length === 0) return null
 
-  let record = result.next()
-  if (record.size() <= 0) return null
+  let record = result.data[0]
+  if (record.length <= 0) return null
 
-  return record.values()
+  return record
 }
 
-async function executeAndReturnMany(query, parameters) {
-  let result = await graphClient.query(query, parameters)
-
-  let valueSet = []
-  while (result.hasNext()) {
-    let record = result.next()
-    if (record.size() > 0) {
-      valueSet.push(record.values())
-    }
-  }
-
-  return valueSet
-}
-
-export default { open, close, execute, executeAndReturnSingle, executeAndReturnMany }
+export default { open, close, execute, executeAndReturnSingle }
