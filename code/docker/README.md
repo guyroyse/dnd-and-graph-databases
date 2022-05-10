@@ -1,8 +1,6 @@
 # Setup Redis + RedisGraph with Docker Compose
 
-This folder contains a Docker Compose file configured to use the edge version of RedisLabs
-redismod image; a Docker image with selected Redis Labs modules. It loads only the RedisGraph
-module.
+This folder contains a Docker Compose file configured to use the latest version of Redis Stack; a Docker image with Redis and the most popular Redis modules.
 
 ## Pre-requisites
 
@@ -13,11 +11,11 @@ This image runs Redis on the default port 6379 which you can access as if
 it were a local install of Redis. Just ensure that you shut down any other
 Redis instances that might be on port 6379 before starting this one.
 
-It also run Redis in snapshot mode. Periodically, as defined in the docker-compose.yml,
-a snapshot of the database will be saved to disk. When the server is stopped and started,
-that snapshot will be loaded back into memory, reconstructing the original dataset.
+It also run Redis Insight 2.0 on port 8002. Just point your web browser of
+choice to http://localhost:8002 and start browsing your database.
 
-The image stores the data file under the ./data directory.
+The image stores the data file under the ./data directory in a file named
+dump.rdb.
 
 To launch Redis simply enter:
 
