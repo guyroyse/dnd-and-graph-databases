@@ -1,23 +1,17 @@
-import { Graph as RedisGraph } from 'redisgraph.js'
+import { createClient } from 'redis'
 
-(async function() {
+const client = createClient()
+client.on('error', (err) => console.log('Redis Client Error', err))
+await client.connect()
 
-  const HOST = 'localhost'
-  const PORT = 6379
 
-  let graphClient = new RedisGraph('dungeon', HOST, PORT)
+let result = await client.graph.query('dungeon', `
+  MATCH (r:Room)
+  WHERE id(r) = 1
+  RETURN
+    r.name AS Name,
+    id(r) AS Id`)
 
-  let result = await graphClient.query(
-    'match (r:Room) where id(r) = $id return r.name as Name, id(r) as ID',
-      { id: 1 }
-  )
+console.log(result)
 
-  console.log(result.getHeader())
-  while (result.hasNext()) {
-    let record = result.next()
-    console.log(record.values())
-  }
-
-  graphClient.close()
-
-})()
+await client.quit()
