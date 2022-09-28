@@ -12,6 +12,6 @@ let result = await client.graph.query('dungeon', `
     r.name AS Name,
     id(r) AS Id`)
 
-console.log(result)
+console.log(JSON.stringify(result))
 
 await client.quit()
