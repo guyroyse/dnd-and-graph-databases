@@ -5,6 +5,7 @@
   "author": "Guy Royse <guy@guyroyse.com>",
   "type": "module",
   "scripts": {
+    "generate": "node server.js",
     "demo": "node demo.js"
   },
   "private": true,
